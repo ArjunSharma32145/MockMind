@@ -1,16 +1,37 @@
 'use client'
-import { AVATARS } from "@/lib/data";
+import { AVATARS , LOGOS , AI_TAGS , SLOTS , ROLES} from "@/lib/data";
 import {Badge} from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@clerk/nextjs";
-import { GoldTitle, GrayTitle, SectionLabel } from "@/components/reusables";
+import { PricingTable, useAuth } from "@clerk/nextjs";
+import { GoldTitle, GrayTitle, SectionHeading, SectionLabel } from "@/components/reusables";
 import { StarsBackground } from "@/components/animate-ui/components/backgrounds/stars";
 import { StarsBackgroundDemo } from "@/components/demo-components-backgrounds-stars";
 import Link from "next/link";
 import { CodeDemo } from "@/components/demo-components-animate-code";
+import BentoCard from "@/components/BentoCard";
+import { Bot , Wallet } from "lucide-react";
+
+
+function MockUI({ rows = 3 }) {
+  const widths = ["w-4/5", "w-3/5", "w-2/5", "w-4/5", "w-1/2"];
+  const colors = [
+    "bg-white/5",
+    "bg-white/5",
+    "bg-amber-400/15",
+    "bg-white/5",
+    "bg-white/5",
+  ];
+  return (
+    <div className="space-y-2">
+      {[...Array(rows)].map((_, i) => (
+        <div key={i} className={`h-2 rounded ${widths[i % widths.length]} ${colors[i % colors.length]}`}></div>
+      ))}
+    </div>
+  );
+}
 
 export default function Home() {
   const router = useRouter();
@@ -79,6 +100,204 @@ export default function Home() {
             <CodeDemo duration={10000} delay={1000} writing cursor />
           </div>
         </section>
+
+        <section className = "relative z-10 border-y border-white/10 py-14">
+        <p className = " text-center text-xs font-medium text-stone-600 tracking-widest uppercase mb-8">MockBirdians landed roles at</p>
+        <div className= "flex flex-wrap items-center justify-center gap-24 px-6">
+          {LOGOS.map((l) => (
+         <Image 
+         key={l.alt}
+         src={l.src}
+         alt= {l.alt}
+         width={50}
+         height={50}
+         className = "h-6 w-auto opacity-60 grayscale"
+         />
+          ))}
+        </div>
+        </section>
+
+        <section className="relative z-10 py-28 max-w-5xl mx-auto px-6">
+          <div className="text-center mb-16">
+        <SectionLabel>How It Works</SectionLabel>
+        <SectionHeading
+        gray="Everything you need to"
+        blue="crack your interviews"
+        />
+          </div>
+
+          <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12 md:col-span-7">
+            <BentoCard
+              icon={<Bot size={20} className="text-amber-400" />}
+              title={<GrayTitle>AI Question Generator</GrayTitle>}
+              desc="Interviewers get a live AI co-pilot generating role-specific questions on demand — system design, behavioural, DSA — all tailored to the candidate's level."
+            >
+              <div className="flex flex-wrap gap-2 mt-5">
+                {AI_TAGS.map((t) => (
+                  <Badge key={t.label} variant={t.active ? "gold" : "outline"}>
+                    {t.label}
+                  </Badge>
+                ))}
+              </div>
+            </BentoCard>
+          </div>
+
+            <div className="col-span-12 md:col-span-5">
+            <BentoCard
+              icon={<Wallet size={16} className="text-amber-400" />}
+              title={<GrayTitle>Credit System</GrayTitle>}
+              desc="Subscribe for monthly credits. Book sessions. Interviewers earn and withdraw any time."
+            >
+              <div className="mt-5 rounded-xl bg-[#141417] border border-white/10 p-5 flex justify-between items-end">
+                <div>
+                  <p className="text-xs text-stone-600 mb-1">Your balance</p>
+                  <p className="font-serif text-4xl leading-none bg-linear-to-br from-amber-300 to-amber-500 bg-clip-text text-transparent">
+                    28
+                  </p>
+                  <p className="text-xs text-stone-600 mt-1">
+                    credits remaining
+                  </p>
+                </div>
+
+                <Badge variant="secondary">+10 this month</Badge>
+              </div>
+            </BentoCard>
+          </div>
+
+          <div className="col-span-12 md:col-span-4">
+            <BentoCard
+              icon="📹"
+              title="HD Video Calls"
+              desc="Powered by Stream. Screen sharing, recording, and instant playback links — all built in."
+            >
+              <MockUI rows={3} />
+            </BentoCard>
+          </div>
+
+          <div className="col-span-12 md:col-span-4">
+            <BentoCard
+              icon="💬"
+              title="Persistent Chat"
+              desc="Message your interviewer before and after the call. Share resources, prep notes, and follow-ups in one thread."
+            />
+          </div>
+
+          <div className="col-span-12 md:col-span-4">
+            <BentoCard
+              icon="🔒"
+              title="Security by Arcjet"
+              desc="Bot protection, rate limiting, and abuse prevention baked into every API route."
+            />
+          </div>
+             
+               <div className="col-span-12 md:col-span-6">
+            <BentoCard
+              icon="📊"
+              title={<GrayTitle>AI Feedback Reports</GrayTitle>}
+              desc="Post-interview analysis by Gemini with actionable insights."
+            >
+              <MockUI rows={5} />
+            </BentoCard>
+          </div>
+
+          <div className="col-span-12 md:col-span-6">
+            <BentoCard
+              icon="🗓️"
+              title={<GoldTitle>Slot-based Scheduling</GoldTitle>}
+              desc="Interviewers set availability once. Interviewees pick from open slots and confirm with one click — no back-and-forth needed."
+            >
+              <div className="flex flex-wrap gap-2 mt-5">
+                {SLOTS.map((s) => (
+                  <span
+                    key={s.label}
+                    className={`text-xs px-3 py-1.5 rounded-lg border ${s.cls}`}
+                  >
+                    {s.label}
+                  </span>
+                ))}
+              </div>
+            </BentoCard>
+          </div>
+          </div>
+        </section>
+
+  <section className="relative z-10 pb-28 max-w-5xl mx-auto px-6">
+        <div className="text-center mb-16">
+          <SectionLabel>Who it&apos;s for</SectionLabel>
+          <SectionHeading gray="Built for both sides" gold="of the table" />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-6">
+          {ROLES.map((role) => (
+            <div
+              key={role.label}
+              className="relative bg-[#0f0f11] border border-white/10 hover:border-amber-400/20 rounded-2xl p-12 h-full transition duration-300 overflow-hidden"
+            >
+              <div className="absolute bottom-0 right-0 w-48 h-48 rounded-full bg-[radial-gradient(circle,rgba(251,191,36,0.05)_0%,transparent_70%)] pointer-events-none" />
+
+              <span className="inline-block text-xs font-semibold text-amber-400 tracking-widest uppercase border border-amber-400/20 bg-amber-400/10 rounded-full px-3 py-1.5 mb-5">
+                {role.label}
+              </span>
+
+              <h3 className="font-serif text-2xl tracking-tight mb-4">
+                {role.title}
+              </h3>
+        <p className="text-sm text-stone-400 leading-relaxed mb-8">
+                {role.desc}
+              </p>
+
+              <ul className="space-y-3">
+                {role.perks.map((p) => (
+                  <li key={p} className="flex gap-3 text-sm text-stone-400">
+                    <span className="mt-0.5 min-w-4 h-4 rounded-full bg-amber-400/10 border border-amber-400/20 flex items-center justify-center text-xs text-amber-400">
+                      ✓
+                    </span>
+                    {p}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </div>
+      </section>
+
+   <section className="relative z-10 pb-28 max-w-5xl mx-auto px-6">
+  <div className="text-center mb-16">
+    <SectionLabel>Transparent Pricing</SectionLabel>
+    <SectionHeading gray="Simple, fair pricing" blue="credit-based plans" />
+     <p className="text-stone-400 mt-3 text-sm">
+     Each credit = one session. Unused credits roll over.
+   </p>
+  </div>
+  <div className="max-w-4xl mx-auto flex flex-col gap-6">
+    <PricingTable />
+  </div>
+   </section>
+
+   <section className= "relative z-10 pb-28 max-w-5xl mx-auto px-6">
+   <StarsBackgroundDemo />
+   <h2 className="font-serif relative text-4xl md:text-5xl leading-tight tracking-tight mb-4">
+    <GrayTitle>Ready to level up your interview game?</GrayTitle>
+    <br/>
+    <GoldTitle>Join MockBird today and soar into your dream job!</GoldTitle>
+   </h2>
+
+   <div className="flex flex-col sm:flex-row justify-center gap-4">
+   <Link href="/onboarding" className="relative">
+   <Button variant="blue" size="hero">
+    Get Started
+   </Button>
+   </Link>
+   <Link href="/explore" className="relative">
+   <Button variant="blue" size="hero">
+    Explore
+   </Button>
+   </Link>
+
+   </div>
+   </section>
+
          </div>
   );
 }
