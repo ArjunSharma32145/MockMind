@@ -1,12 +1,14 @@
-"use client"
+import CreditButton  from "./CreditButton";
+import RoleRedirect from "./RoleRedirect";
 import Image from "next/image";
-import React from 'react'
-import { useAuth } from "@clerk/nextjs";
 import { SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import Link from 'next/link';
+import { Users, CalendarDays } from "lucide-react";
+import { checkUser } from "@/lib/checkUser";
 
-const Header = () => {
-  const { isSignedIn } = useAuth();
+const Header = async () => {
+  const user = await checkUser();
+  const isSignedIn = Boolean(user);
 
   return (
     <nav className='fixed top-0 inset-x-0 z-50 flex items-center justify-between px-10 py-3 border-b border-white/7 backdrop-blur-xl'>
@@ -20,8 +22,10 @@ const Header = () => {
   className="h-14 w-auto" 
 />
    </Link>
+
+   {user && <RoleRedirect  role={user.role}/>}
   
-    { /* Sign in */ }
+    { /* Sign in / dashboard */ }
     <div className = "flex items-center gap-3">
       {!isSignedIn ? (
         <>
@@ -33,7 +37,36 @@ const Header = () => {
               </SignUpButton>
         </>
       ) : (
-        <UserButton />
+        <>
+          {user.role === "INTERVIEWER" && (
+            <Link href="/dashboard" className="bg-white/10 text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 hover:bg-white/20 transition inline-flex items-center justify-center">
+              Dashboard
+            </Link>
+          )}
+
+          {user?.role === "INTERVIEWEE" && (
+            <>
+              <Link href="/explore" className="bg-white/10 text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 hover:bg-white/20 transition inline-flex items-center gap-2">
+                <Users size={16} />
+                <span className="hidden md:inline">Explore</span>
+              </Link>
+              <Link href="/appointments" className="bg-white/10 text-white rounded-full font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 hover:bg-white/20 transition inline-flex items-center gap-2">
+                <CalendarDays size={16} />
+                <span className="hidden md:inline">My Appointments</span>
+              </Link>
+            </>
+          )}
+
+           <CreditButton
+            role={user?.role === "INTERVIEWER" ? "INTERVIEWER" : "INTERVIEWEE"}
+            credits={
+              (user?.role === "INTERVIEWER"
+                ? user?.creditBalance
+                : user?.credits) ?? 0
+            }
+          />
+          <UserButton />
+        </>
       )}
     </div>
     </nav>

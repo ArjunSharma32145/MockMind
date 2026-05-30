@@ -1,11 +1,12 @@
-'use client'
+
 import { AVATARS , LOGOS , AI_TAGS , SLOTS , ROLES} from "@/lib/data";
 import {Badge} from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { PricingTable, useAuth } from "@clerk/nextjs";
+
+import { PricingTable } from "@clerk/nextjs";
+import { currentUser } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { GoldTitle, GrayTitle, SectionHeading, SectionLabel } from "@/components/reusables";
 import { StarsBackground } from "@/components/animate-ui/components/backgrounds/stars";
 import { StarsBackgroundDemo } from "@/components/demo-components-backgrounds-stars";
@@ -33,18 +34,10 @@ function MockUI({ rows = 3 }) {
   );
 }
 
-export default function Home() {
-  const router = useRouter();
-  const { isSignedIn, isLoaded } = useAuth();
-
-  useEffect(() => {
-    if (isLoaded && !isSignedIn) {
-      router.push('/sign-up');
-    }
-  }, [isLoaded, isSignedIn, router]);
-
-  if (!isLoaded || !isSignedIn) {
-    return null;
+export default async function Home() {
+  const user = await currentUser();
+  if (!user) {
+    redirect('/sign-up');
   }
 
   return (
@@ -262,7 +255,7 @@ export default function Home() {
         </div>
       </section>
 
-   <section className="relative z-10 pb-28 max-w-5xl mx-auto px-6">
+   <section className="relative pb-28 max-w-5xl mx-auto px-6">
   <div className="text-center mb-16">
     <SectionLabel>Transparent Pricing</SectionLabel>
     <SectionHeading gray="Simple, fair pricing" blue="credit-based plans" />
@@ -270,12 +263,22 @@ export default function Home() {
      Each credit = one session. Unused credits roll over.
    </p>
   </div>
-  <div className="max-w-4xl mx-auto flex flex-col gap-6">
-    <PricingTable />
+  <div className="max-w-4xl mx-auto flex flex-col gap-6 overflow-visible">
+    <div className="relative overflow-visible">
+      <PricingTable checkoutProps = {{
+        appearance:{
+          elements: {
+            drawerRoot:{
+              zIndex:2000,
+            },
+          },
+        },
+      }} />
+    </div>
   </div>
    </section>
 
-   <section className= "relative z-10 pb-28 max-w-5xl mx-auto px-6">
+   <section className= "relative z-10 pb-28 max-w-5xl mx-auto px-6 relative overflow-visible">
    <StarsBackgroundDemo />
    <h2 className="font-serif relative text-4xl md:text-5xl leading-tight tracking-tight mb-4">
     <GrayTitle>Ready to level up your interview game?</GrayTitle>
